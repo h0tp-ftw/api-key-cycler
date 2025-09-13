@@ -1,14 +1,13 @@
 ***
 
 # API Key Cycler
+<div align="center"> <!-- Shields.io badges for visual impact --> <a href="https://github.com/h0tp-ftw/api-key-cycler"> <img src="https://img.shields.io/github/stars/h0tp-ftw/api-key-cycler?style=for-the-badge&label=Stars" alt="GitHub stars" /> </a> <a href="https://github.com/h0tp-ftw/api-key-cycler/releases"> <img src="https://img.shields.io/github/v/release/h0tp-ftw/api-key-cycler?style=for-the-badge&label=Latest" alt="Latest Release" /> </a> <a href="https://github.com/h0tp-ftw/api-key-cycler/blob/main/LICENSE"> <img src="https://img.shields.io/github/license/h0tp-ftw/api-key-cycler?style=for-the-badge" alt="MIT License"/> </a> <a href="https://www.python.org/downloads/"> <img src="https://img.shields.io/badge/Python-3.7%2B-blue?style=for-the-badge" alt="Python 3.7+"/> </a> <a href="https://github.com/h0tp-ftw/api-key-cycler"> <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue?style=for-the-badge" alt="Windows | Linux | macOS"/> </a> </div>
 
-**Universal API key and environment variable cycler.** Seamlessly cycle through multiple API credential sets for OpenAI, Gemini, Azure, Anthropic, and any other service for locally-stored environment variables (e.g. in a .env file). Features interactive installers, cross-platform compatibility, and intelligent configuration validation.
+**Universal API key and environment variable cycler.** Seamlessly cycle through multiple API credential sets for OpenAI, Gemini, Azure, Anthropic, and any other service for locally-stored environment variables (e.g. in a .env file). Features interactive installers, cross-platform compatibility, and intelligent configuration validation. **CURRENTLY IN ALPHA - PENDING MORE CROSS-PLATFORM TESTING AND USER REVIEWS**
 
 ***
 
 ## 🚀 Quick Start
-
-Get up and running in seconds:
 
 ### Linux/macOS
 ```bash
