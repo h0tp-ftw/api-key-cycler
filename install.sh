@@ -18,7 +18,7 @@ INSTALL_DIR=""
 PARAMETER_GROUPS=""
 ENV_FILE_PATH=""
 DEFAULT_MODE=""
-SCRIPT_URL="https://raw.githubusercontent.com/YOUR_USERNAME/cycle_keys/main/cycle_keys.py"
+SCRIPT_URL="https://raw.githubusercontent.com/h0tp-ftw/api-key-cycler/main/cycle_keys.py"
 
 echo -e "${BLUE}🔄 API Key Cycler by h0tp-ftw${NC}"
 echo -e "${BLUE}================================================${NC}"
@@ -30,10 +30,10 @@ validate_directory() {
     if [[ -z "$dir" ]]; then
         return 1
     fi
-
+    
     # Expand tilde to home directory
     dir="${dir/#\~/$HOME}"
-
+    
     # Check if directory exists or can be created
     if [[ -d "$dir" ]]; then
         return 0
@@ -48,28 +48,28 @@ validate_directory() {
 validate_env_format() {
     local env_file="$1"
     local -a param_groups=("${!2}")
-
+    
     if [[ ! -f "$env_file" ]]; then
         return 2  # File doesn't exist
     fi
-
+    
     local issues_found=0
     local group_index=1
-
+    
     echo -e "${CYAN}🔍 Validating .env file format...${NC}"
-
+    
     for group in "${param_groups[@]}"; do
         echo -e "${YELLOW}Checking Group $group_index: $group${NC}"
-
+        
         # Split parameters by comma
         IFS=',' read -ra PARAMS <<< "$group"
         local param_counts=()
-
+        
         for param in "${PARAMS[@]}"; do
             param=$(echo "$param" | xargs)  # Trim whitespace
             local count=$(grep -c "^#\?\s*$param\s*=" "$env_file" 2>/dev/null || echo 0)
             param_counts+=($count)
-
+            
             if [[ $count -eq 0 ]]; then
                 echo -e "   ${RED}❌ No entries found for $param${NC}"
                 issues_found=1
@@ -77,7 +77,7 @@ validate_env_format() {
                 echo -e "   ${GREEN}✅ Found $count entries for $param${NC}"
             fi
         done
-
+        
         # Check if all parameters have same count
         local first_count=${param_counts[0]}
         for count in "${param_counts[@]}"; do
@@ -87,33 +87,33 @@ validate_env_format() {
                 break
             fi
         done
-
+        
         ((group_index++))
     done
-
+    
     return $issues_found
 }
 
 # Function to show correct .env format
 show_env_format() {
     local -a param_groups=("${!1}")
-
+    
     echo -e "${CYAN}📄 Correct .env file format:${NC}"
     echo ""
-
+    
     local group_index=1
     for group in "${param_groups[@]}"; do
         echo -e "${YELLOW}# Group $group_index: $group${NC}"
-
+        
         # Split parameters by comma
         IFS=',' read -ra PARAMS <<< "$group"
-
+        
         # Show 3 example sets
         for set_num in 1 2 3; do
             echo -e "${PURPLE}# Set $set_num${NC}"
             for param in "${PARAMS[@]}"; do
                 param=$(echo "$param" | xargs)  # Trim whitespace
-
+                
                 if [[ $set_num -eq 1 ]]; then
                     # First set active (uncommented)
                     echo "${param}=value${set_num}_for_${param,,}"
@@ -124,11 +124,11 @@ show_env_format() {
             done
             echo ""
         done
-
+        
         ((group_index++))
         echo ""
     done
-
+    
     echo -e "${CYAN}💡 Key Points:${NC}"
     echo "• Active sets are uncommented"
     echo "• Inactive sets are commented with #"
@@ -143,14 +143,14 @@ echo "(Press Enter for current directory, or specify a path like ~/scripts)"
 
 while true; do
     read -p "Installation directory: " INSTALL_DIR
-
+    
     # Default to current directory if empty
     if [[ -z "$INSTALL_DIR" ]]; then
         INSTALL_DIR="."
         echo -e "${GREEN}✅ Using current directory${NC}"
         break
     fi
-
+    
     if validate_directory "$INSTALL_DIR"; then
         INSTALL_DIR="${INSTALL_DIR/#\~/$HOME}"  # Expand tilde
         echo -e "${GREEN}✅ Directory validated: $INSTALL_DIR${NC}"
@@ -174,22 +174,23 @@ declare -a PARAM_GROUPS_ARRAY
 
 while true; do
     read -p "Enter parameter groups: " PARAMETER_GROUPS
-
+    
     if [[ -z "$PARAMETER_GROUPS" ]]; then
         echo -e "${RED}❌ Please enter at least one parameter group.${NC}"
         continue
     fi
-
+    
     # Split by pipe and validate
     IFS='|' read -ra PARAM_GROUPS_ARRAY <<< "$PARAMETER_GROUPS"
-
+    
     echo -e "${CYAN}📋 Configured groups:${NC}"
-    local group_index=1
+    # FIXED: Remove 'local' keyword here since we're not inside a function
+    group_index=1
     for group in "${PARAM_GROUPS_ARRAY[@]}"; do
         echo "   Group $group_index: $group"
         ((group_index++))
     done
-
+    
     read -p "Is this correct? (y/n): " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -205,13 +206,13 @@ echo "(Press Enter for '.env' in the same directory as the script)"
 
 while true; do
     read -p "Default .env file path: " ENV_FILE_PATH
-
+    
     if [[ -z "$ENV_FILE_PATH" ]]; then
         ENV_FILE_PATH=".env"
         echo -e "${GREEN}✅ Using default: .env${NC}"
         break
     fi
-
+    
     # Expand tilde if present
     ENV_FILE_PATH="${ENV_FILE_PATH/#\~/$HOME}"
     echo -e "${GREEN}✅ Default .env file: $ENV_FILE_PATH${NC}"
@@ -231,7 +232,7 @@ fi
 
 if [[ -f "$target_env_file" ]]; then
     echo -e "${CYAN}📄 Found existing .env file: $target_env_file${NC}"
-
+    
     if validate_env_format "$target_env_file" PARAM_GROUPS_ARRAY[@]; then
         echo -e "${GREEN}✅ .env file format is correct!${NC}"
     else
@@ -264,7 +265,7 @@ echo "2) Random cycling (picks random non-current set)"
 while true; do
     read -p "Choose default mode (1 or 2): " -n 1 -r DEFAULT_MODE
     echo
-
+    
     case $DEFAULT_MODE in
         1)
             DEFAULT_MODE="sequential"
@@ -336,7 +337,7 @@ for group in "${PARAM_GROUPS_ARRAY[@]}"; do
     if [[ $group_index -gt 1 ]]; then
         python_groups+=",\n    "
     fi
-
+    
     # Convert comma-separated parameters to Python list format
     python_list="["
     IFS=',' read -ra PARAMS <<< "$group"
@@ -350,7 +351,7 @@ for group in "${PARAM_GROUPS_ARRAY[@]}"; do
         ((param_index++))
     done
     python_list+="]"
-
+    
     python_groups+="$python_list"
     ((group_index++))
 done
@@ -384,35 +385,36 @@ if [[ ! -f "$target_env_file" ]]; then
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo -e "${CYAN}📄 Creating template .env file...${NC}"
-
+        
         # Determine the correct path for .env file
         if [[ "$ENV_FILE_PATH" = /* ]]; then
             template_env_file="$ENV_FILE_PATH"
         else
             template_env_file="$INSTALL_DIR/$ENV_FILE_PATH"
         fi
-
+        
         # Create directories if needed
         mkdir -p "$(dirname "$template_env_file")"
-
+        
         # Generate template content
         {
             echo "# cycle_keys.py configuration file"
             echo "# Generated by installer on $(date)"
             echo ""
-
-            local group_index=1
+            
+            # FIXED: Remove 'local' keyword here since we're not inside a function
+            group_index=1
             for group in "${PARAM_GROUPS_ARRAY[@]}"; do
                 echo "# Group $group_index: $group"
-
+                
                 IFS=',' read -ra PARAMS <<< "$group"
-
+                
                 # Create 3 example sets
                 for set_num in 1 2 3; do
                     echo "# Set $set_num"
                     for param in "${PARAMS[@]}"; do
                         param=$(echo "$param" | xargs)
-
+                        
                         if [[ $set_num -eq 1 ]]; then
                             echo "${param}=your_${param,,}_value_${set_num}"
                         else
@@ -421,13 +423,13 @@ if [[ ! -f "$target_env_file" ]]; then
                     done
                     echo ""
                 done
-
+                
                 ((group_index++))
             done
-
+            
             echo "# Add your actual API keys and configuration values above"
         } > "$template_env_file"
-
+        
         echo -e "${GREEN}✅ Template .env file created at: $template_env_file${NC}"
     fi
 fi
